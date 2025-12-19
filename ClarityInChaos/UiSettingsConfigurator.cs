@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Dalamud.Game.ClientState.Objects.Enums;
 using Dalamud.Game.Config;
 using Dalamud.Plugin.Services;
 using FFXIVClientStructs.FFXIV.Client.Game.Group;
@@ -297,7 +296,7 @@ namespace ClarityInChaos
     public void UpdateHighlights(ConfigForGroupingSize config)
     {
       var pcKind = Dalamud.Game.ClientState.Objects.Enums.ObjectKind.Player;
-      var pcs = Service.ObjectTable.Where(o => o.ObjectKind == pcKind && o.EntityId != Service.ClientState.LocalPlayer?.EntityId);
+      var pcs = Service.ObjectTable.Where(o => o.ObjectKind == pcKind && o.EntityId != Service.PlayerState.EntityId);
       var party = groupManager->MainGroup.PartyMembers.ToArray();
       var partyMembers = pcs.Where(o => party.Any(p => p.EntityId == o.EntityId));
       var others = pcs.Where(o => !party.Any(p => p.EntityId == o.EntityId));
@@ -318,9 +317,9 @@ namespace ClarityInChaos
         }
       }
 
-      if (config.OwnHighlight != ObjectHighlightColor.None)
+      if (config.OwnHighlight != ObjectHighlightColor.None && Service.ObjectTable.LocalPlayer != null)
       {
-        ApplyHighlight(Service.ClientState.LocalPlayer?.Address, config.OwnHighlight);
+        ApplyHighlight(Service.ObjectTable.LocalPlayer?.Address, config.OwnHighlight);
       }
     }
 

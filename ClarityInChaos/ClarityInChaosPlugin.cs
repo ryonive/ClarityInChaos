@@ -1,7 +1,6 @@
 ﻿using Dalamud.Game.ClientState.Conditions;
 using Dalamud.Game.Command;
 using Dalamud.Interface.Windowing;
-using Dalamud.IoC;
 using Dalamud.Plugin;
 using Dalamud.Plugin.Services;
 
@@ -55,6 +54,7 @@ namespace ClarityInChaos
       Service.Framework.Update += BattleEffectsConfigurator.OnUpdate;
       PluginInterface.UiBuilder.Draw += DrawUI;
       PluginInterface.UiBuilder.OpenConfigUi += DrawConfigUI;
+      PluginInterface.UiBuilder.OpenMainUi += DrawConfigUI;
     }
 
     public void Dispose()
@@ -62,6 +62,7 @@ namespace ClarityInChaos
 
       PluginInterface.UiBuilder.Draw -= DrawUI;
       PluginInterface.UiBuilder.OpenConfigUi -= DrawConfigUI;
+      PluginInterface.UiBuilder.OpenMainUi -= DrawConfigUI;
 
       Service.Framework.Update -= BattleEffectsConfigurator.OnUpdate;
 
