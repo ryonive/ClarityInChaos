@@ -164,6 +164,17 @@ namespace ClarityInChaos
       ImGui.Text("Never");
     }
 
+    private static void DrawTitlesTableHeader()
+    {
+      ImGui.TableNextRow();
+
+      ImGui.TableSetColumnIndex(1);
+      ImGui.Text("Always");
+
+      ImGui.TableSetColumnIndex(5);
+      ImGui.Text("Never");
+    }
+
     private bool DrawNameplatesTable(ref ConfigForGroupingSize config)
     {
       var changed = false;
@@ -204,6 +215,53 @@ namespace ClarityInChaos
       if (DrawNameplatesRadiosLine($"Friends", ref friends))
       {
         config.FriendsNameplate = friends;
+        changed = true;
+      }
+
+      ImGui.EndTable();
+      return changed;
+    }
+
+    private static bool DrawTitlesTable(ref ConfigForGroupingSize config)
+    {
+      var changed = false;
+      ImGui.BeginTable("TableTitles", 6);
+
+      var own = config.OwnTitle;
+      var party = config.PartyTitle;
+      var alliance = config.AllianceTitle;
+      var others = config.OthersTitle;
+      var friends = config.FriendsTitle;
+
+      DrawTitlesTableHeader();
+
+      if (DrawTitlesRadiosLine($"Own", ref own))
+      {
+        config.OwnTitle = own;
+        changed = true;
+      }
+
+      if (DrawTitlesRadiosLine($"Party", ref party))
+      {
+        config.PartyTitle = party;
+        changed = true;
+      }
+
+      if (DrawTitlesRadiosLine($"Alliance", ref alliance))
+      {
+        config.AllianceTitle = alliance;
+        changed = true;
+      }
+
+      if (DrawTitlesRadiosLine($"Others", ref others))
+      {
+        config.OthersTitle = others;
+        changed = true;
+      }
+
+      if (DrawTitlesRadiosLine($"Friends", ref friends))
+      {
+        config.FriendsTitle = friends;
         changed = true;
       }
 
@@ -270,6 +328,14 @@ namespace ClarityInChaos
       {
         ImGui.Indent();
         changed |= DrawNameplatesTable(ref config);
+        ImGui.Unindent();
+        ImGui.EndTabItem();
+      }
+
+      if (ImGui.BeginTabItem("Titles"))
+      {
+        ImGui.Indent();
+        changed |= DrawTitlesTable(ref config);
         ImGui.Unindent();
         ImGui.EndTabItem();
       }
@@ -392,6 +458,37 @@ namespace ClarityInChaos
       if (ImGui.RadioButton($"##When Targeted", effect is NameplateVisibility.WhenTargeted))
       {
         effect = NameplateVisibility.WhenTargeted;
+        changed = true;
+      }
+
+      ImGui.TableSetColumnIndex(5);
+      ImGui.SetCursorPosX(ImGui.GetCursorPos().X + (ImGui.GetContentRegionAvail().X - 24) / 2f);
+      if (ImGui.RadioButton($"##Never", effect is NameplateVisibility.Never))
+      {
+        effect = NameplateVisibility.Never;
+        changed = true;
+      }
+
+      ImGui.PopID();
+
+      return changed;
+    }
+
+    private static bool DrawTitlesRadiosLine(string label, ref NameplateVisibility effect)
+    {
+      var changed = false;
+
+      ImGui.TableNextRow();
+      ImGui.TableSetColumnIndex(0);
+      ImGui.Text(label);
+
+      ImGui.PushID(label);
+
+      ImGui.TableSetColumnIndex(1);
+      ImGui.SetCursorPosX(ImGui.GetCursorPos().X + (ImGui.GetContentRegionAvail().X - 24) / 2f);
+      if (ImGui.RadioButton($"##Always", effect is NameplateVisibility.Always))
+      {
+        effect = NameplateVisibility.Always;
         changed = true;
       }
 

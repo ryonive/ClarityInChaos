@@ -123,6 +123,48 @@ namespace ClarityInChaos
       }
     }
 
+    private static NameplateVisibility GetTitle(UiConfigOption option)
+    {
+      Service.GameConfig.TryGet(option, out uint val);
+      return val == 1 ? NameplateVisibility.Always : NameplateVisibility.Never;
+    }
+
+    private static void SetTitle(UiConfigOption option, NameplateVisibility value)
+    {
+      uint gameVal = value == NameplateVisibility.Always ? 1u : 0u;
+      Service.GameConfig.Set(option, gameVal);
+    }
+
+    public NameplateVisibility OwnTitle
+    {
+      get => GetTitle(UiConfigOption.NamePlateNameTitleTypeSelf);
+      set => SetTitle(UiConfigOption.NamePlateNameTitleTypeSelf, value);
+    }
+
+    public NameplateVisibility PartyTitle
+    {
+      get => GetTitle(UiConfigOption.NamePlateNameTitleTypeParty);
+      set => SetTitle(UiConfigOption.NamePlateNameTitleTypeParty, value);
+    }
+
+    public NameplateVisibility AllianceTitle
+    {
+      get => GetTitle(UiConfigOption.NamePlateNameTitleTypeAlliance);
+      set => SetTitle(UiConfigOption.NamePlateNameTitleTypeAlliance, value);
+    }
+
+    public NameplateVisibility OthersTitle
+    {
+      get => GetTitle(UiConfigOption.NamePlateNameTitleTypeOther);
+      set => SetTitle(UiConfigOption.NamePlateNameTitleTypeOther, value);
+    }
+
+    public NameplateVisibility FriendsTitle
+    {
+      get => GetTitle(UiConfigOption.NamePlateNameTitleTypeFriend);
+      set => SetTitle(UiConfigOption.NamePlateNameTitleTypeFriend, value);
+    }
+
     public UiSettingsConfigurator(ClarityInChaosPlugin plugin)
     {
       this.plugin = plugin;
@@ -181,6 +223,11 @@ namespace ClarityInChaos
       AllianceNameplate = backup.AllianceNameplate;
       OthersNameplate = backup.OthersNameplate;
       FriendsNameplate = backup.FriendsNameplate;
+      OwnTitle = backup.OwnTitle;
+      PartyTitle = backup.PartyTitle;
+      AllianceTitle = backup.AllianceTitle;
+      OthersTitle = backup.OthersTitle;
+      FriendsTitle = backup.FriendsTitle;
     }
 
     public void UIChange(GroupingSize size)
@@ -195,6 +242,11 @@ namespace ClarityInChaos
       AllianceNameplate = config.AllianceNameplate;
       OthersNameplate = config.OthersNameplate;
       FriendsNameplate = config.FriendsNameplate;
+      OwnTitle = config.OwnTitle;
+      PartyTitle = config.PartyTitle;
+      AllianceTitle = config.AllianceTitle;
+      OthersTitle = config.OthersTitle;
+      FriendsTitle = config.FriendsTitle;
       ClearHighlights();
     }
 
@@ -219,6 +271,11 @@ namespace ClarityInChaos
         AllianceNameplate = activeConfig.AllianceNameplate;
         OthersNameplate = activeConfig.OthersNameplate;
         FriendsNameplate = activeConfig.FriendsNameplate;
+        OwnTitle = activeConfig.OwnTitle;
+        PartyTitle = activeConfig.PartyTitle;
+        AllianceTitle = activeConfig.AllianceTitle;
+        OthersTitle = activeConfig.OthersTitle;
+        FriendsTitle = activeConfig.FriendsTitle;
         changed = true;
       }
       else

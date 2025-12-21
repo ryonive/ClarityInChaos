@@ -78,6 +78,17 @@ namespace ClarityInChaos
       config.OthersNameplate = (NameplateVisibility)npOthers;
       Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeFriend, out uint npFriends);
       config.FriendsNameplate = (NameplateVisibility)npFriends;
+
+      Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeSelf, out uint npTitleSelf);
+      config.OwnTitle = (NameplateVisibility)npTitleSelf;
+      Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeParty, out uint npTitleParty);
+      config.PartyTitle = (NameplateVisibility)npTitleParty;
+      Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeAlliance, out uint npTitleAlliance);
+      config.AllianceTitle = (NameplateVisibility)npTitleAlliance;
+      Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeOther, out uint npTitleOther);
+      config.OthersTitle = (NameplateVisibility)npTitleOther;
+      Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeFriend, out uint npTitleFriend);
+      config.FriendsTitle = (NameplateVisibility)npTitleFriend;
     }
 
     private ConfigForGroupingSize GetConfigForGroupingSize(GroupingSize size)
@@ -134,6 +145,12 @@ namespace ClarityInChaos
     public NameplateVisibility AllianceNameplate { get; set; }
     public NameplateVisibility OthersNameplate { get; set; }
     public NameplateVisibility FriendsNameplate { get; set; }
+
+    public NameplateVisibility OwnTitle { get; set; }
+    public NameplateVisibility PartyTitle { get; set; }
+    public NameplateVisibility AllianceTitle { get; set; }
+    public NameplateVisibility OthersTitle { get; set; }
+    public NameplateVisibility FriendsTitle { get; set; }
 
     public ObjectHighlightColor OwnHighlight { get; set; }
     public ObjectHighlightColor PartyHighlight { get; set; }
