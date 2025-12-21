@@ -6,164 +6,181 @@ using System;
 
 namespace ClarityInChaos
 {
-  [Serializable]
-  public unsafe class Configuration : IPluginConfiguration
-  {
-    public int Version { get; set; } = 0;
-
-    public bool IsVisible { get; set; } = true;
-
-    public bool Enabled { get; set; } = true;
-
-    public ConfigForBackup Backup { get; init; }
-    public ConfigForSolo Solo { get; init; }
-    public ConfigForLightParty LightParty { get; init; }
-    public ConfigForFullParty FullParty { get; init; }
-    public ConfigForAlliance Alliance { get; init; }
-
-    public bool DebugMessages = false;
-
-    public bool DebugForcePartySize = false;
-    public int DebugPartySize = 0;
-    public bool DebugForceInDuty = false;
-
-    // the below exist just to make saving less cumbersome
-    [NonSerialized]
-    private IDalamudPluginInterface? pluginInterface;
-
-    public Configuration(bool isFresh = false)
+    [Serializable]
+    public unsafe class Configuration : IPluginConfiguration
     {
-      Backup = new ConfigForBackup();
-      Solo = new ConfigForSolo();
-      LightParty = new ConfigForLightParty();
-      FullParty = new ConfigForFullParty();
-      Alliance = new ConfigForAlliance();
+        public int Version { get; set; } = 0;
 
-      if (isFresh)
-      {
-        ApplyDefaultConfig(Backup);
-        ApplyDefaultConfig(Solo);
-        ApplyDefaultConfig(LightParty);
-        ApplyDefaultConfig(FullParty);
-        ApplyDefaultConfig(Alliance);
-      }
-    }
+        public bool IsVisible { get; set; } = true;
 
-    public void Initialize(IDalamudPluginInterface pluginInterface)
-    {
-      this.pluginInterface = pluginInterface;
-    }
+        public bool Enabled { get; set; } = true;
 
-    public void Save()
-    {
-      pluginInterface!.SavePluginConfig(this);
-    }
+        public ConfigForBackup Backup { get; init; }
+        public ConfigForSolo Solo { get; init; }
+        public ConfigForLightParty LightParty { get; init; }
+        public ConfigForFullParty FullParty { get; init; }
+        public ConfigForAlliance Alliance { get; init; }
 
-    private void ApplyDefaultConfig(ConfigForGroupingSize config)
-    {
-      Service.GameConfig.TryGet(UiConfigOption.BattleEffectSelf, out uint beSelf);
-      config.Self = (BattleEffect)beSelf;
-      Service.GameConfig.TryGet(UiConfigOption.BattleEffectParty, out uint beParty);
-      config.Party = (BattleEffect)beParty;
-      Service.GameConfig.TryGet(UiConfigOption.BattleEffectOther, out uint beOther);
-      config.Other = (BattleEffect)beOther;
+        public bool DebugMessages = false;
 
-      Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeSelf, out uint npSelf);
-      config.OwnNameplate = (NameplateVisibility)npSelf;
-      Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeParty, out uint npParty);
-      config.PartyNameplate = (NameplateVisibility)npParty;
-      Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeAlliance, out uint npAlliance);
-      config.AllianceNameplate = (NameplateVisibility)npAlliance;
-      Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeOther, out uint npOthers);
-      config.OthersNameplate = (NameplateVisibility)npOthers;
-      Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeFriend, out uint npFriends);
-      config.FriendsNameplate = (NameplateVisibility)npFriends;
-    }
+        public bool DebugForcePartySize = false;
+        public int DebugPartySize = 0;
+        public bool DebugForceInDuty = false;
 
-    private ConfigForGroupingSize GetConfigForGroupingSize(GroupingSize size)
-    {
-      return size switch
-      {
-        GroupingSize.Solo => Solo,
-        GroupingSize.LightParty => LightParty,
-        GroupingSize.FullParty => FullParty,
-        GroupingSize.Alliance => Alliance,
-        _ => Backup,
-      };
-    }
+        // the below exist just to make saving less cumbersome
+        [NonSerialized]
+        private IDalamudPluginInterface? pluginInterface;
 
-    private ConfigForGroupingSize GetConfigForGroupingSizeNotInDuty(GroupingSize size)
-    {
-      var config = GetConfigForGroupingSize(size);
-      if (config.OnlyInDuty)
-      {
-        if (size == GroupingSize.Backup)
+        public Configuration(bool isFresh = false)
         {
-          return Backup;
+            Backup = new ConfigForBackup();
+            Solo = new ConfigForSolo();
+            LightParty = new ConfigForLightParty();
+            FullParty = new ConfigForFullParty();
+            Alliance = new ConfigForAlliance();
+
+            if (isFresh)
+            {
+                ApplyDefaultConfig(Backup);
+                ApplyDefaultConfig(Solo);
+                ApplyDefaultConfig(LightParty);
+                ApplyDefaultConfig(FullParty);
+                ApplyDefaultConfig(Alliance);
+            }
         }
-        else
+
+        public void Initialize(IDalamudPluginInterface pluginInterface)
         {
-          return GetConfigForGroupingSizeNotInDuty(size - 1);
+            this.pluginInterface = pluginInterface;
         }
-      }
-      return config;
+
+        public void Save()
+        {
+            pluginInterface!.SavePluginConfig(this);
+        }
+
+        private void ApplyDefaultConfig(ConfigForGroupingSize config)
+        {
+            Service.GameConfig.TryGet(UiConfigOption.BattleEffectSelf, out uint beSelf);
+            config.Self = (BattleEffect)beSelf;
+            Service.GameConfig.TryGet(UiConfigOption.BattleEffectParty, out uint beParty);
+            config.Party = (BattleEffect)beParty;
+            Service.GameConfig.TryGet(UiConfigOption.BattleEffectOther, out uint beOther);
+            config.Other = (BattleEffect)beOther;
+
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeSelf, out uint npSelf);
+            config.OwnNameplate = (NameplateVisibility)npSelf;
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeParty, out uint npParty);
+            config.PartyNameplate = (NameplateVisibility)npParty;
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeAlliance, out uint npAlliance);
+            config.AllianceNameplate = (NameplateVisibility)npAlliance;
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeOther, out uint npOthers);
+            config.OthersNameplate = (NameplateVisibility)npOthers;
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateDispTypeFriend, out uint npFriends);
+            config.FriendsNameplate = (NameplateVisibility)npFriends;
+
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeSelf, out uint npTitleSelf);
+            config.OwnTitle = (NameplateVisibility)npTitleSelf;
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeParty, out uint npTitleParty);
+            config.PartyTitle = (NameplateVisibility)npTitleParty;
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeAlliance, out uint npTitleAlliance);
+            config.AllianceTitle = (NameplateVisibility)npTitleAlliance;
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeOther, out uint npTitleOther);
+            config.OthersTitle = (NameplateVisibility)npTitleOther;
+            Service.GameConfig.TryGet(UiConfigOption.NamePlateNameTitleTypeFriend, out uint npTitleFriend);
+            config.FriendsTitle = (NameplateVisibility)npTitleFriend;
+        }
+
+        private ConfigForGroupingSize GetConfigForGroupingSize(GroupingSize size)
+        {
+            return size switch
+            {
+                GroupingSize.Solo => Solo,
+                GroupingSize.LightParty => LightParty,
+                GroupingSize.FullParty => FullParty,
+                GroupingSize.Alliance => Alliance,
+                _ => Backup,
+            };
+        }
+
+        private ConfigForGroupingSize GetConfigForGroupingSizeNotInDuty(GroupingSize size)
+        {
+            var config = GetConfigForGroupingSize(size);
+            if (config.OnlyInDuty)
+            {
+                if (size == GroupingSize.Backup)
+                {
+                    return Backup;
+                }
+                else
+                {
+                    return GetConfigForGroupingSizeNotInDuty(size - 1);
+                }
+            }
+            return config;
+        }
+
+        public ConfigForGroupingSize GetConfigForGroupingSize(GroupingSize size, bool inDuty)
+        {
+            if (inDuty)
+            {
+                return GetConfigForGroupingSize(size);
+            }
+            else
+            {
+                return GetConfigForGroupingSizeNotInDuty(size);
+            }
+        }
     }
 
-    public ConfigForGroupingSize GetConfigForGroupingSize(GroupingSize size, bool inDuty)
+    public abstract class ConfigForGroupingSize
     {
-      if (inDuty)
-      {
-        return GetConfigForGroupingSize(size);
-      }
-      else
-      {
-        return GetConfigForGroupingSizeNotInDuty(size);
-      }
+        public abstract GroupingSize Size { get; }
+        public BattleEffect Self { get; set; }
+        public BattleEffect Party { get; set; }
+        public BattleEffect Other { get; set; }
+
+        public NameplateVisibility OwnNameplate { get; set; }
+        public NameplateVisibility PartyNameplate { get; set; }
+        public NameplateVisibility AllianceNameplate { get; set; }
+        public NameplateVisibility OthersNameplate { get; set; }
+        public NameplateVisibility FriendsNameplate { get; set; }
+
+        public NameplateVisibility OwnTitle { get; set; }
+        public NameplateVisibility PartyTitle { get; set; }
+        public NameplateVisibility AllianceTitle { get; set; }
+        public NameplateVisibility OthersTitle { get; set; }
+        public NameplateVisibility FriendsTitle { get; set; }
+
+        public ObjectHighlightColor OwnHighlight { get; set; }
+        public ObjectHighlightColor PartyHighlight { get; set; }
+        public ObjectHighlightColor OthersHighlight { get; set; }
+
+        public bool OnlyInDuty { get; set; }
     }
-  }
 
-  public abstract class ConfigForGroupingSize
-  {
-    public abstract GroupingSize Size { get; }
-    public BattleEffect Self { get; set; }
-    public BattleEffect Party { get; set; }
-    public BattleEffect Other { get; set; }
+    public class ConfigForBackup : ConfigForGroupingSize
+    {
+        public override GroupingSize Size => GroupingSize.Backup;
+    }
 
-    public NameplateVisibility OwnNameplate { get; set; }
-    public NameplateVisibility PartyNameplate { get; set; }
-    public NameplateVisibility AllianceNameplate { get; set; }
-    public NameplateVisibility OthersNameplate { get; set; }
-    public NameplateVisibility FriendsNameplate { get; set; }
+    public class ConfigForSolo : ConfigForGroupingSize
+    {
+        public override GroupingSize Size => GroupingSize.Solo;
+    }
 
-    public ObjectHighlightColor OwnHighlight { get; set; }
-    public ObjectHighlightColor PartyHighlight { get; set; }
-    public ObjectHighlightColor OthersHighlight { get; set; }
+    public class ConfigForLightParty : ConfigForGroupingSize
+    {
+        public override GroupingSize Size => GroupingSize.LightParty;
+    }
 
-    public bool OnlyInDuty { get; set; }
-  }
+    public class ConfigForFullParty : ConfigForGroupingSize
+    {
+        public override GroupingSize Size => GroupingSize.FullParty;
+    }
 
-  public class ConfigForBackup : ConfigForGroupingSize
-  {
-    public override GroupingSize Size => GroupingSize.Backup;
-  }
-
-  public class ConfigForSolo : ConfigForGroupingSize
-  {
-    public override GroupingSize Size => GroupingSize.Solo;
-  }
-
-  public class ConfigForLightParty : ConfigForGroupingSize
-  {
-    public override GroupingSize Size => GroupingSize.LightParty;
-  }
-
-  public class ConfigForFullParty : ConfigForGroupingSize
-  {
-    public override GroupingSize Size => GroupingSize.FullParty;
-  }
-
-  public class ConfigForAlliance : ConfigForGroupingSize
-  {
-    public override GroupingSize Size => GroupingSize.Alliance;
-  }
+    public class ConfigForAlliance : ConfigForGroupingSize
+    {
+        public override GroupingSize Size => GroupingSize.Alliance;
+    }
 }
